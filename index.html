@@ -1219,7 +1219,7 @@ document.getElementById("copy").addEventListener("click",()=>{
 /* 정밀 풀이 신청 */
 /* 구글 시트 연동: Apps Script 웹 앱 주소(https://script.google.com/macros/s/.../exec)를 아래에 넣으면
    신청이 시트로 바로 쌓여. 비워두면 claude.ai 안에서는 앱 저장소에만 저장돼. */
-const SHEET_ENDPOINT="https://script.google.com/macros/s/AKfycbwkVE_etLTM2s_eKTUjBn7bbX1-JCT6Fg_1-O4nc8eCYrJ31Qf2Wczk5JvKmt5kCQ6d/exec";
+const SHEET_ENDPOINT="https://script.google.com/macros/s/AKfycbxqqt7yUwFjZ5AeEaSOHpmRhRoWFrC1ipRO4zX4HCxJU3dZE60nEpZg8ACnu8LSwU90/exec";
 const applyWrap=document.getElementById("applyWrap"),openBtn=document.getElementById("openApply"),apMsg=document.getElementById("apMsg");
 let dbP=null,userP=null;
 const canClaude=()=>!!(window.claude&&window.claude.use);
