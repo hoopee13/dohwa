@@ -1244,12 +1244,15 @@ document.getElementById("applyForm").addEventListener("submit",async e=>{
     createdAt:new Date().toISOString()
   };
   btn.disabled=true;apMsg.textContent="보내는 중…";
-  let ok=false,denied=false;
+  let ok=false,denied=false,sheetErr="";
   if(SHEET_ENDPOINT){
     try{
-      await fetch(SHEET_ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload)});
-      ok=true;
-    }catch(err){}
+      const res=await fetch(SHEET_ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(payload),redirect:"follow"});
+      const txt=await res.text();
+      let j=null;try{j=JSON.parse(txt)}catch(_){}
+      if(j&&j.ok) ok=true;
+      else sheetErr=j&&j.error?j.error:(txt.indexOf("<")===0?"시트 주소가 로그인 화면을 돌려줬어. 배포 액세스를 '모든 사용자'로 바꿔줘.":"응답을 읽지 못했어 ("+res.status+")");
+    }catch(err){sheetErr="시트 주소에 연결하지 못했어. 배포 주소와 액세스 설정을 확인해줘.";}
   }
   const db=dbP?await dbP:null,user=userP?await userP:null;
   if(db&&user){
@@ -1258,7 +1261,7 @@ document.getElementById("applyForm").addEventListener("submit",async e=>{
   }
   if(!ok){
     btn.disabled=false;
-    apMsg.textContent=denied?"신청 권한이 없어. 링크를 공유한 사람에게 문의해줘.":"전송에 실패했어. 잠시 뒤 다시 눌러줘.";
+    apMsg.textContent=denied?"신청 권한이 없어. 링크를 공유한 사람에게 문의해줘.":(sheetErr?"전송 실패: "+sheetErr:"전송에 실패했어. 잠시 뒤 다시 눌러줘.");
     return;
   }
   applyWrap.querySelector("form").hidden=true;
