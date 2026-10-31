@@ -1074,7 +1074,7 @@ function lockedPanel(head,sigs){
       <div class="lock-cta"><svg aria-hidden="true"><use href="#lock"/></svg><b>여기서부터 진짜 풀이</b><span>신청하면 담당자가 직접 풀이해서 연락드려요</span><button type="button" class="unlock-btn">${APPLIED?"신청 완료":"정밀 풀이 신청하기"}</button></div></div>
   </section>`;
 }
-let lastFull=null;
+let lastFull=null,lastHidden=null;
 let lastText="",lastBirth=null;
 
 function pentagon(cnt){
@@ -1187,6 +1187,20 @@ function render(fresh){
 
   LOCKQ=[];
   const J=a=>a.join(" ");
+  const NL=a=>a.join("\n");
+  lastHidden={
+    single:NL(prof.single.concat(SINGLE_T[BT])),
+    signals:DR.sig.map(x=>"· ["+x.tag+"] "+x.t+"\n  "+J(x.l)).join("\n"),
+    timing:`${DR.fwd?"순행":"역행"} 대운 · ${DR.start}세 시작\n${DR.dae.map(x=>x.age+"세 "+STEMS[x.s]+BR[x.b]+"("+tenGod(ds,x.s)+")").join(", ")}\n\n${J(curLine)}\n\n${DR.seun.map(x=>x.yy+" "+x.nm+"("+x.ch+"): "+J(x.l)).join("\n")}`,
+    roast:NL(prof.roast.concat([ROAST_T[BT]])),
+    black:NL(prof.black.concat(BLACK_B[db])),
+    lie:NL(prof.lie.concat(LIE_T[BT])),
+    end:NL(prof.end.concat(END_B[db])),
+    spouse:SPOUSE[db][0]+"\n"+NL(SPOUSE[db][1]),
+    tengod:TEN_PATTERN[topG][0]+"\n"+NL(TEN_PATTERN[topG][1]),
+    outer:NL(DR.monthL),
+    inner:DR.hourL?NL(DR.hourL):"태어난 시간 모름"
+  };
   lastFull={score:s,grade:g.h,text:[
     `[사주 원국] ${KEYS.map(k=>p[k]?COLN[k]+" "+STEMS[p[k][0]]+BR[p[k][1]]:COLN[k]+" 모름").join(" / ")}`,
     `[오행] ${cnt.map((c,i)=>EL[i]+" "+c).join(", ")}`,
@@ -1338,7 +1352,7 @@ document.getElementById("applyForm").addEventListener("submit",async e=>{
     topic:document.getElementById("apTopic").value,
     memo:document.getElementById("apMemo").value.trim(),
     gender:b.gd||"",birth:b.bd||"",birthHour:(b.hb>=0?BR[b.hb]+"시":"모름"),ilju:b.ilju||"",
-    score:lastFull?lastFull.score:"",grade:lastFull?lastFull.grade:"",reading:lastFull?lastFull.text:"",
+    score:lastFull?lastFull.score:"",grade:lastFull?lastFull.grade:"",hidden:lastHidden||{},reading:lastFull?lastFull.text:"",
     createdAt:new Date().toISOString()
   };
   btn.disabled=true;apMsg.textContent="보내는 중…";
