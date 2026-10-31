@@ -31,6 +31,7 @@
   --bg:#8c1514;--panel:#981b19;--line:#f2e4c9;--ink:#fbf2e2;--muted:#f0cdb8;--gold:#e8bd62;--fill:#f2e4c9;--on-fill:#8c1514;--tile:#fbf3e4;color-scheme:dark}}
 :root[data-theme="dark"]{--bg:#8c1514;--panel:#981b19;--line:#f2e4c9;--ink:#fbf2e2;--muted:#f0cdb8;--gold:#e8bd62;--fill:#f2e4c9;--on-fill:#8c1514;--tile:#fbf3e4;color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{
   background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.8;
   word-break:keep-all;overflow-wrap:break-word;
@@ -1048,9 +1049,9 @@ const DAE_T={
 };
 
 /* 블러 잠금: 신청하면 열림 */
-const UNLOCK_ON_APPLY=true;   // false로 바꾸면 신청해도 화면에선 계속 잠겨 있고, 풀이는 시트로만 받아요
+const UNLOCK_ON_APPLY=false;   // false로 바꾸면 신청해도 화면에선 계속 잠겨 있고, 풀이는 시트로만 받아요
 let UNLOCKED=false;
-try{UNLOCKED=localStorage.getItem("dohwa_unlocked")==="1"}catch(_){}
+try{localStorage.removeItem("dohwa_unlocked")}catch(_){}
 function scramble(html,n){
   const t=html.replace(/<br\s*\/?>/gi,"\n").replace(/<\/(p|li|b|div)>/gi,"\n").replace(/<[^>]+>/g,"").replace(/&[a-z#0-9]+;/gi,"");
   let seed=t.length||7;
@@ -1061,7 +1062,7 @@ function scramble(html,n){
     let k=0;return "<p>"+esc(l.replace(/\S/g,()=>ch[k++]))+"</p>";
   }).join("");
 }
-let LOCKQ=[];
+let LOCKQ=[],APPLIED=false;
 const lock=(html,label)=>{if(UNLOCKED)return html;LOCKQ.push({label,html});return ""};
 function lockedPanel(head,sigs){
   const all=LOCKQ.map(x=>x.html).join("<br>");
@@ -1070,7 +1071,7 @@ function lockedPanel(head,sigs){
     ${sigs.length?`<p class="lock-count">네 사주에서 연애 신호 ${sigs.length}개 발견</p><div class="chips" style="justify-content:center;margin:0 0 14px">${sigs.map(x=>`<span class="ss ${x.hot?"hot":""}">${esc(x.tag)}</span>`).join("")}</div>`:""}
     <ul class="lock-list">${LOCKQ.map(x=>`<li><svg aria-hidden="true"><use href="#lock"/></svg><span>${esc(x.label)}</span></li>`).join("")}</ul>
     <div class="locked big"><div class="blur" aria-hidden="true">${scramble(all,14)}</div>
-      <div class="lock-cta"><svg aria-hidden="true"><use href="#lock"/></svg><b>여기서부터 진짜 풀이</b><span>신청하면 전부 바로 열려요</span><button type="button" class="unlock-btn">신청하고 전체 보기</button></div></div>
+      <div class="lock-cta"><svg aria-hidden="true"><use href="#lock"/></svg><b>여기서부터 진짜 풀이</b><span>신청하면 담당자가 직접 풀이해서 연락드려요</span><button type="button" class="unlock-btn">${APPLIED?"신청 완료":"정밀 풀이 신청하기"}</button></div></div>
   </section>`;
 }
 let lastFull=null;
@@ -1369,7 +1370,10 @@ document.getElementById("applyForm").addEventListener("submit",async e=>{
     render(false);
     d.querySelector("span").textContent="잠긴 풀이가 다 열렸어. 위로 올라가서 확인해봐. "+payload.contact+" 번호로 정밀 풀이 안내도 보내줄게.";
   }else{
-    d.querySelector("span").textContent=payload.contact+" 번호로 정밀 풀이 안내를 보내줄게.";
+    APPLIED=true;apMsg.textContent="";
+    d.innerHTML='<b>신청 완료!</b><span></span>';
+    d.querySelector("span").textContent="담당자가 "+payload.contact+" 번호로 곧 연락드릴게요. 잠긴 풀이는 연락드릴 때 함께 전해드려요.";
+    document.querySelectorAll(".unlock-btn").forEach(b=>{b.textContent="신청 완료";b.disabled=true});
   }
   applyWrap.appendChild(d);
 });
