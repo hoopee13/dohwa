@@ -345,12 +345,12 @@ details.more[open] summary::after{content:"−"}
 
   <section class="panel fill cta" id="cta">
     <div class="head"><h3><i>精密</i><span>더 자세한 풀이가 궁금해?</span></h3></div>
-    <p class="headline">여기까진 맛보기야.<br>진짜는 지금부터.</p>
+    <p class="headline">여기까진 사주가 말해준 거야.<br>네 상황은 사람이 직접 봐줄게.</p>
     <ul>
-      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>솔로인 진짜 이유 전체</span></li>
-      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>사주에 숨은 연애 신호 전부</span></li>
-      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>대운·2026·2027 연애 타이밍</span></li>
-      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>흑역사·배우자궁·속마음까지 심층 풀이</span></li>
+      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>담당자가 직접 보는 1:1 정밀 풀이</span></li>
+      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>지금 고민(썸·재회·짝사랑) 맞춤 답변</span></li>
+      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>2027년 월별 연애운과 조심할 달</span></li>
+      <li><svg viewBox="0 0 20 20"><use href="#spark"/></svg><span>궁금한 그 사람과의 궁합</span></li>
     </ul>
     <button class="go inv" id="openApply" type="button" aria-expanded="false" aria-controls="applyWrap">더 자세한 풀이 신청하기</button>
   </section>
@@ -1050,7 +1050,7 @@ const DAE_T={
 
 /* 블러 잠금: 신청하면 열림 */
 const UNLOCK_ON_APPLY=false;   // false로 바꾸면 신청해도 화면에선 계속 잠겨 있고, 풀이는 시트로만 받아요
-let UNLOCKED=false;
+let UNLOCKED=true;   // 잠금 전부 해제. false로 바꾸면 다시 블러로 잠겨요
 try{localStorage.removeItem("dohwa_unlocked")}catch(_){}
 function scramble(html,n){
   const t=html.replace(/<br\s*\/?>/gi,"\n").replace(/<\/(p|li|b|div)>/gi,"\n").replace(/<[^>]+>/g,"").replace(/&[a-z#0-9]+;/gi,"");
@@ -1386,7 +1386,7 @@ document.getElementById("applyForm").addEventListener("submit",async e=>{
   }else{
     APPLIED=true;apMsg.textContent="";
     d.innerHTML='<b>신청 완료!</b><span></span>';
-    d.querySelector("span").textContent="담당자가 "+payload.contact+" 번호로 곧 연락드릴게요. 잠긴 풀이는 연락드릴 때 함께 전해드려요.";
+    d.querySelector("span").textContent="담당자가 "+payload.contact+" 번호로 곧 연락드릴게요.";
     document.querySelectorAll(".unlock-btn").forEach(b=>{b.textContent="신청 완료";b.disabled=true});
   }
   applyWrap.appendChild(d);
